@@ -114,13 +114,7 @@ can.addEventListener('touchend', function (e) {
         change();
     } else {
         if (eY - sY >= 20 && (eY - sY) > Math.abs(eX - sX)) {
-            console.log('下')
-            // TODO: 计算下落的y
-            A.y = HEIGHT - A.row * SIZE;
-            B.y = HEIGHT - B.row * SIZE;
-            calcTo(A.y > B.y ? A : B);
-            calcTo(A.y > B.y ? B : A);
-            moveTo([A, B]);
+            verticalMove();
         } else if (eX - sX >= 20) {
             horizontalMove(1);
         } else if (sX - eX >= 20 ) {
@@ -128,6 +122,23 @@ can.addEventListener('touchend', function (e) {
         }
     }
 }, this);
+document.onkeyup = function (e) {
+    switch (e.keyCode) {
+        case 37:
+            horizontalMove(-1);
+            break;
+        case 38:
+            change();
+            break;
+        case 39:
+            horizontalMove(1);
+            break;
+        case 40:
+            verticalMove();
+        default:
+            break;
+    }
+}
 
 function calcTo(Z) {
     var ct = 0;
@@ -139,7 +150,13 @@ function calcTo(Z) {
     Z.toY = ct;
     setBlock(Z, Z.col, Z.toY, Z.n);
 }
-
+function verticalMove() {
+    A.y = HEIGHT - A.row * SIZE;
+    B.y = HEIGHT - B.row * SIZE;
+    calcTo(A.y > B.y ? A : B);
+    calcTo(A.y > B.y ? B : A);
+    moveTo([A, B]);
+}
 function horizontalMove(x) {
     if (A.col + x < 0 || B.col + x < 0 || A.col + x >= 5 || B.col + x >= 5) {
         return false;
