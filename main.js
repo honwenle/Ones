@@ -9,6 +9,8 @@ var WIDTH = can.clientWidth,
     HEIGHT = can.clientHeight;
 var SIZE = WIDTH / 5;
 var timer;
+var group = 0,
+    groups = [];
 
 
 var lv = 2;
@@ -27,15 +29,53 @@ function drawBack() {
     btx.fillRect(0, 0, WIDTH, HEIGHT - 5 * SIZE);
 }
 function checkClear() {
-    blockList.forEach(function (obj) {
-        if (obj.review) {
-            checkBlock(obj);
-            obj.review = false;
+    for (var i = 0; i < 5; i++) {
+        for (var j = 0; j < 5; j++) {
+            var o = blockList[getID(i, j)],
+                d = blockList[getID(i, j-1)],
+                l = blockList[getID(i-1, j)],
+                u = blockList[getID(i, j+1)],
+                r = blockList[getID(i+1, j)];
+            if (o) {
+                if (!o.group) {
+                    o.group = group + 1;
+                }
+                if (u && u.n == o.n) {
+                    if (u.group) {
+                        o.group = u.group;
+                    } else {
+                        u.group = o.group;
+                    }
+                }
+                if (r && r.n == o.n) {
+                    r.group = o.group;
+                }
+                groups[o.group] = groups[o.group] || [];
+                groups[o.group].push(getID(i, j));
+                group = Math.max(group, o.group);
+            } else {
+                break;
+            }
+        }
+    }
+    clearBlock();
+}
+function clearBlock() {
+    groups.forEach(function (arr) {
+        if (arr.length >= 3) {
+            arr.forEach(function (n) {
+                delete blockList[n];
+            })
         }
     });
-}
-function checkBlock(obj) {
-    // 检查该点的延伸是否能消除
+    btx.clearRect(0, 0, WIDTH, HEIGHT);
+    drawBack();
+    blockList.forEach(function (obj) {
+        obj.group = undefined;
+        drawBlockXY(obj, btx);
+    });
+    groups = [];
+    group = 0;
 }
 function moveTo(arr) {
     cancelAnimationFrame(timer);
@@ -44,7 +84,7 @@ function moveTo(arr) {
         if (arr.length > 0) {
             arr.forEach(function (obj, i) {
                 if (obj.y + SIZE / 3 > HEIGHT - obj.toY * SIZE) {
-                    obj.review = true;
+                    // obj.review = true;
                     arr.splice(i, 1);
                 } else {
                     obj.y += SIZE / 3;
