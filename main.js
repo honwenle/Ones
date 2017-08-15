@@ -26,6 +26,17 @@ function drawBack() {
     btx.fillStyle = '#0f92bb';
     btx.fillRect(0, 0, WIDTH, HEIGHT - 5 * SIZE);
 }
+function checkClear() {
+    blockList.forEach(function (obj) {
+        if (obj.review) {
+            checkBlock(obj);
+            obj.review = false;
+        }
+    });
+}
+function checkBlock(obj) {
+    // 检查该点的延伸是否能消除
+}
 function moveTo(arr) {
     cancelAnimationFrame(timer);
     timer = requestAnimationFrame(function fn() {
@@ -33,6 +44,7 @@ function moveTo(arr) {
         if (arr.length > 0) {
             arr.forEach(function (obj, i) {
                 if (obj.y + SIZE / 3 > HEIGHT - obj.toY * SIZE) {
+                    obj.review = true;
                     arr.splice(i, 1);
                 } else {
                     obj.y += SIZE / 3;
@@ -42,10 +54,10 @@ function moveTo(arr) {
             timer = requestAnimationFrame(fn);
         } else {
             cancelAnimationFrame(timer);
-            // TODO: 检查消除
             blockList.forEach(function (obj) {
                 drawBlockXY(obj, btx);
             });
+            checkClear();
             newBlock();
         }
     });
@@ -55,11 +67,11 @@ function drawBlockXY(obj, context) {
     var y = HEIGHT - obj.row * SIZE;
     drawBlock(x, y, obj.n, context);
 }
-function setBlock(obj, x, y, n, isAB) {
+function setBlock(obj, x, y, n) {
     obj.col = x;
     obj.row = y;
     obj.n = n;
-    !isAB && (blockList[getID(x, y)] = obj);
+    blockList[getID(x, y)] = obj;
 }
 function getID(x, y) {
     return x + y * 5;
@@ -76,9 +88,17 @@ function drawBlock(x, y, n, context) {
     _ctx.fillText(n, x + SIZE / 2, y - SIZE / 2);
 }
 function newBlock() {
-    setBlock(A, 1, 5, ~~(Math.random() * lv) + 1, true);
+    A = {
+        col: 1,
+        row: 5,
+        n: ~~(Math.random() * lv) + 1
+    };
     drawBlockXY(A);
-    setBlock(B, 2, 5, ~~(Math.random() * lv) + 1, true);
+    B = {
+        col: 2,
+        row: 5,
+        n: ~~(Math.random() * lv) + 1
+    };
     drawBlockXY(B);
 }
 
@@ -93,35 +113,64 @@ can.addEventListener('touchend', function (e) {
     if (Math.abs(eX - sX) < 20 && Math.abs(eY - sY) < 20) {
         change();
     } else {
-        if (sX - eX >= 20) {
-            horizontalMove(-1);
-        } else if (eX - sX >= 20) {
-            horizontalMove(1);
-        } else if (eY - sY >= 20) {
+        if (eY - sY >= 20 && (eY - sY) > Math.abs(eX - sX)) {
             console.log('下')
             // TODO: 计算下落的y
             A.y = HEIGHT - A.row * SIZE;
             B.y = HEIGHT - B.row * SIZE;
-            A.toY = 0;
-            B.toY = 0;
-            setBlock(A, A.col, A.toY, A.n);
-            setBlock(B, B.col, B.toY, B.n);
+            calcTo(A.y > B.y ? A : B);
+            calcTo(A.y > B.y ? B : A);
             moveTo([A, B]);
+        } else if (eX - sX >= 20) {
+            horizontalMove(1);
+        } else if (sX - eX >= 20 ) {
+            horizontalMove(-1);
         }
     }
 }, this);
+
+function calcTo(Z) {
+    var ct = 0;
+    for (var i = 0; i < 5; i++) {
+        if (blockList[getID(Z.col, i)]) {
+            ct ++
+        }
+    }
+    Z.toY = ct;
+    setBlock(Z, Z.col, Z.toY, Z.n);
+}
 
 function horizontalMove(x) {
     if (A.col + x < 0 || B.col + x < 0 || A.col + x >= 5 || B.col + x >= 5) {
         return false;
     }
-    setBlock(A, A.col + x, A.row, A.n, true);
-    setBlock(B, B.col + x, B.row, B.n, true);
+    A.col += x;
+    B.col += x;
     ctx.clearRect(0, 0, WIDTH, HEIGHT);
     drawBlockXY(A);
     drawBlockXY(B);
 }
 function change() {
-    console.log('变换');
-    // TODO: 变换
+    if (A.row == B.row) {
+        if (A.col < B.col) {
+            A.col += 1;
+            A.row += 1;
+        } else {
+            B.col += 1;
+            B.row += 1;
+        }
+    } else {
+        if (A.row > B.row) {
+            A.row -= 1;
+            B.col -= 1;
+            B.col = Math.abs(B.col);
+        } else {
+            B.row -= 1;
+            A.col -= 1;
+            A.col = Math.abs(A.col);
+        }
+    }
+    ctx.clearRect(0, 0, WIDTH, HEIGHT);
+    drawBlockXY(A);
+    drawBlockXY(B);
 }
