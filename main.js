@@ -1,36 +1,44 @@
+var WIDTH = window.screen.availWidth,
+    HEIGHT = window.screen.availHeight;
+var SIZE = WIDTH / 5;
+var timer;
+
 var back = document.getElementById('back');
 var can = document.getElementById('can');
 var btx = back.getContext('2d');
 var ctx = can.getContext('2d');
-var timer;
 var A = {},
     B = {};
 var blockList = [];
 
 var lv = 2;
 
-back.width = window.screen.availWidth;
-back.height = window.screen.availHeight;
-can.width = window.screen.availWidth;
-can.height = window.screen.availHeight;
+back.width = WIDTH;
+back.height = HEIGHT;
+can.width = WIDTH;
+can.height = HEIGHT;
 
-var SIZE = window.screen.availWidth / 5;
 var colorArr = ['#555', '#fee', '#f66', '#f22', '#f60', '#ff2'];
 drawBack();
 newBlock();
 
 function drawBack() {
     btx.fillStyle = '#0f92bb';
-    btx.fillRect(0, 0, window.screen.availWidth, window.screen.availHeight - 5 * SIZE);
+    btx.fillRect(0, 0, WIDTH, HEIGHT - 5 * SIZE);
 }
-function moveTo(obj, toY) {
-    obj.y = window.screen.availHeight - obj.row * SIZE;
+function moveTo(arr) {
     cancelAnimationFrame(timer);
     timer = requestAnimationFrame(function fn() {
-        if (obj.y < window.screen.availHeight - toY * SIZE) {
-            ctx.clearRect(obj.col * SIZE, 0, window.screen.availWidth, window.screen.availHeight);
-            obj.y += 25;
-            drawBlock(obj.col * SIZE, obj.y, obj.n);
+        if (arr.length > 0) {
+            ctx.clearRect(0, 0, WIDTH, HEIGHT);
+            arr.forEach(function (obj, i) {
+                if (obj.y + SIZE / 3 > HEIGHT - obj.toY * SIZE) {
+                    arr.splice(i, 1);
+                } else {
+                    obj.y += SIZE / 3;
+                }
+                drawBlock(obj.col * SIZE, obj.y, obj.n);
+            });
             timer = requestAnimationFrame(fn);
         } else {
             cancelAnimationFrame(timer);
@@ -39,7 +47,7 @@ function moveTo(obj, toY) {
 }
 function drawBlockXY(obj) {
     var x = obj.col * SIZE;
-    var y = window.screen.availHeight - obj.row * SIZE;
+    var y = HEIGHT - obj.row * SIZE;
     drawBlock(x, y, obj.n);
 }
 function setBlock(obj, x, y, n) {
@@ -80,14 +88,27 @@ can.addEventListener('touchend', function (e) {
     } else {
         if (eY - sY >= 20) {
             console.log('下')
+            // TODO: 计算下落的y
+            A.y = HEIGHT - A.row * SIZE;
+            B.y = HEIGHT - B.row * SIZE;
+            A.toY = 0;
+            B.toY = 0;
+            moveTo([A, B]);
         } else if (eX - sX >= 20) {
-            console.log('右')
+            horizontalMove(1);
         } else if (sX - eX >= 20) {
-            console.log('左')
+            horizontalMove(-1);
         }
     }
 }, this);
 
+function horizontalMove(x) {
+    setBlock(A, A.col + x, A.row, A.n);
+    setBlock(B, B.col + x, B.row, B.n);
+    ctx.clearRect(0, 0, WIDTH, HEIGHT);
+    drawBlockXY(A);
+    drawBlockXY(B);
+}
 function change() {
     console.log('变换');
 }
