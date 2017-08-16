@@ -20,7 +20,7 @@ back.height = HEIGHT;
 can.width = WIDTH;
 can.height = HEIGHT;
 
-var colorArr = ['#555', '#f6e6ce', '#faa297', '#eb4951', '#f2964b', '#a6aa3d', '#cde967', '#2a8e52', '#3cc6b0', '#5986c4', '#6c629f'];
+var colorArr = ['#555', '#f6e6ce', '#faa297', '#eb4951', '#ff942a', '#a6aa3d', '#cde967', '#2a8e52', '#3cc6b0', '#5986c4', '#6c629f'];
 drawBack();
 newBlock();
 
