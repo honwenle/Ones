@@ -4,7 +4,7 @@ var btx = back.getContext('2d');
 var ctx = can.getContext('2d');
 var A = {},
     B = {};
-var blockList = [];
+var blockList = {};
 var WIDTH = can.clientWidth,
     HEIGHT = can.clientHeight;
 var SIZE = WIDTH / 5;
@@ -78,10 +78,10 @@ function clearBlock() {
     });
     btx.clearRect(0, 0, WIDTH, HEIGHT);
     drawBack();
-    blockList.forEach(function (obj) {
-        obj.group = undefined;
-        drawBlockXY(obj, btx);
-    });
+    for (var i in blockList) {
+        blockList[i].group = undefined;
+        drawBlockXY(blockList[i], btx);
+    }
     groups = [];
     group = 0;
     if (hasClear) {
@@ -91,12 +91,30 @@ function clearBlock() {
     }
 }
 function dropBlock() {
-    // TODO: 把有空缺的格子下落
-    var hasDrop = false;
-    if (hasDrop) {
-        checkClear();
+    var dropList = [];
+    for (var i = 0; i < 5; i++) {
+        var ct = 0;
+        for (var j = 0; j < 5; j++) {
+            var obj = blockList[getID(i,j)];
+            if (obj) {
+                if (ct > 0) {
+                    delete blockList[getID(i,j)];
+                    obj.y = HEIGHT - obj.row * SIZE;
+                    obj.toY = obj.row - ct;
+                    dropList.push(obj);
+                }
+            } else {
+                ct++;
+            }
+        }
+    }
+    dropList.forEach(function (obj) {
+        setBlock(obj, obj.col, obj.toY, obj.n);
+    });
+    if (dropList.length > 0) {
+        moveTo(dropList);
     } else {
-        newBlock();
+        checkClear();
     }
 }
 function moveTo(arr) {
@@ -105,7 +123,7 @@ function moveTo(arr) {
         ctx.clearRect(0, 0, WIDTH, HEIGHT);
         if (arr.length > 0) {
             arr.forEach(function (obj, i) {
-                if (obj.y + SIZE / 3 > HEIGHT - obj.toY * SIZE) {
+                if (obj.y + SIZE / 10 > HEIGHT - obj.toY * SIZE) {
                     // obj.review = true;
                     arr.splice(i, 1);
                 } else {
@@ -116,9 +134,9 @@ function moveTo(arr) {
             timer = requestAnimationFrame(fn);
         } else {
             cancelAnimationFrame(timer);
-            blockList.forEach(function (obj) {
-                drawBlockXY(obj, btx);
-            });
+            for (var i in blockList) {
+                drawBlockXY(blockList[i], btx);
+            }
             checkClear();
         }
     });
