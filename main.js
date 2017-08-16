@@ -88,6 +88,14 @@ function clearBlock() {
     if (hasClear) {
         dropBlock()
     } else {
+        for (var i = 5; i < 7; i++) {
+            for (var j = 0; j < 5; j++) {
+                if (blockList[getID(j, i)]) {
+                    alert('GameOver')
+                    window.location.reload();
+                }
+            }
+        }
         newBlock();
     }
 }
@@ -95,7 +103,7 @@ function dropBlock() {
     var dropList = [];
     for (var i = 0; i < 5; i++) {
         var ct = 0;
-        for (var j = 0; j < 5; j++) {
+        for (var j = 0; j < 7; j++) {
             var obj = blockList[getID(i,j)];
             if (obj) {
                 if (ct > 0) {
@@ -228,7 +236,7 @@ document.onkeyup = function (e) {
 
 function calcTo(Z) {
     var ct = 0;
-    for (var i = 0; i < 5; i++) {
+    for (var i = 0; i < 7; i++) {
         if (blockList[getID(Z.col, i)]) {
             ct ++
         }
