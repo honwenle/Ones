@@ -20,7 +20,7 @@ back.height = HEIGHT;
 can.width = WIDTH;
 can.height = HEIGHT;
 
-var colorArr = ['#555', '#fee', '#f66', '#f22', '#f60', '#ff2'];
+var colorArr = ['#555', '#f6e6ce', '#faa297', '#eb4951', '#f2964b', '#a6aa3d', '#cde967', '#2a8e52', '#3cc6b0', '#5986c4', '#6c629f'];
 drawBack();
 newBlock();
 
@@ -74,6 +74,7 @@ function clearBlock() {
             });
             var xy = getXY(min);
             setBlock({}, xy.x, xy.y, n+1);
+            lv = n+1 > 2 ? n : 2;
         }
     });
     btx.clearRect(0, 0, WIDTH, HEIGHT);
