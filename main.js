@@ -93,6 +93,7 @@ function clearBlock() {
                 if (blockList[getID(j, i)]) {
                     alert('GameOver')
                     window.location.reload();
+                    return false;
                 }
             }
         }
