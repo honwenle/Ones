@@ -74,7 +74,7 @@ function clearBlock() {
             });
             var xy = getXY(min);
             setBlock({}, xy.x, xy.y, n+1);
-            lv = n+1 > 2 ? Math.max(lv, n) : 2;
+            lv = n+1 > 2 ? Math.max(lv, n) : lv;
         }
     });
     btx.clearRect(0, 0, WIDTH, HEIGHT);
