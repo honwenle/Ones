@@ -28,6 +28,7 @@ function drawBack() {
     btx.fillStyle = '#0f92bb';
     btx.fillRect(0, 0, WIDTH, HEIGHT - 5 * SIZE);
 }
+// 把连接在一起的归为一组
 function checkClear() {
     for (var i = 0; i < 5; i++) {
         for (var j = 0; j < 5; j++) {
@@ -60,12 +61,19 @@ function checkClear() {
     }
     clearBlock();
 }
+// 把组成员大于3个的消除，把最下左角的格子生成面值+1
 function clearBlock() {
+    var hasClear = false;
     groups.forEach(function (arr) {
         if (arr.length >= 3) {
+            hasClear = true;
+            var min = arr[0], n = blockList[arr[0]].n;
             arr.forEach(function (n) {
+                min = Math.min(n, min);
                 delete blockList[n];
-            })
+            });
+            var xy = getXY(min);
+            setBlock({}, xy.x, xy.y, n+1);
         }
     });
     btx.clearRect(0, 0, WIDTH, HEIGHT);
@@ -76,6 +84,20 @@ function clearBlock() {
     });
     groups = [];
     group = 0;
+    if (hasClear) {
+        dropBlock()
+    } else {
+        newBlock();
+    }
+}
+function dropBlock() {
+    // TODO: 把有空缺的格子下落
+    var hasDrop = false;
+    if (hasDrop) {
+        checkClear();
+    } else {
+        newBlock();
+    }
 }
 function moveTo(arr) {
     cancelAnimationFrame(timer);
@@ -98,7 +120,6 @@ function moveTo(arr) {
                 drawBlockXY(obj, btx);
             });
             checkClear();
-            newBlock();
         }
     });
 }
@@ -115,6 +136,12 @@ function setBlock(obj, x, y, n) {
 }
 function getID(x, y) {
     return x + y * 5;
+}
+function getXY(n) {
+    return {
+        x: n % 5,
+        y: ~~(n / 5)
+    };
 }
 function drawBlock(x, y, n, context) {
     _ctx = context || ctx
