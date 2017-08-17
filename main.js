@@ -31,7 +31,7 @@ function drawBack() {
 // 把连接在一起的归为一组
 function checkClear() {
     for (var i = 0; i < 5; i++) {
-        for (var j = 0; j < 5; j++) {
+        for (var j = 0; j < 7; j++) {
             var o = blockList[getID(i, j)],
                 d = blockList[getID(i, j-1)],
                 l = blockList[getID(i-1, j)],
