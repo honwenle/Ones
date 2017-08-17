@@ -11,7 +11,7 @@ var SIZE = WIDTH / 5;
 var timer;
 var group = 0,
     groups = [];
-
+var canPlay = true;
 
 var lv = 2;
 
@@ -19,7 +19,7 @@ back.width = WIDTH;
 back.height = HEIGHT;
 can.width = WIDTH;
 can.height = HEIGHT;
-
+var noclip = 0;
 var colorArr = ['#555', '#f6e6ce', '#faa297', '#eb4951', '#ff942a', '#ff2', '#a6aa3d', '#cde967', '#2a8e52', '#3cc6b0', '#5986c4', '#6c629f'];
 drawBack();
 newBlock();
@@ -133,11 +133,11 @@ function moveTo(arr) {
         ctx.clearRect(0, 0, WIDTH, HEIGHT);
         if (arr.length > 0) {
             arr.forEach(function (obj, i) {
-                if (obj.y + SIZE / 10 > HEIGHT - obj.toY * SIZE) {
-                    // obj.review = true;
+                if (obj.y + SIZE / 5 > HEIGHT - obj.toY * SIZE) {
                     arr.splice(i, 1);
+                    drawBlockXY(obj, btx);
                 } else {
-                    obj.y += SIZE / 3;
+                    obj.y += SIZE / 5;
                 }
                 drawBlock(obj.col * SIZE, obj.y, obj.n);
             });
@@ -195,6 +195,7 @@ function newBlock() {
         n: ~~(Math.random() * lv) + 1
     };
     drawBlockXY(B);
+    canPlay = true;
 }
 
 can.addEventListener('touchstart', function (e) {
@@ -203,12 +204,16 @@ can.addEventListener('touchstart', function (e) {
     sY = e.touches[0].clientY;
 }, this);
 can.addEventListener('touchend', function (e) {
+    if (!canPlay) {
+        return false
+    }
     var eX = e.changedTouches[0].clientX,
         eY = e.changedTouches[0].clientY;
     if (Math.abs(eX - sX) < 20 && Math.abs(eY - sY) < 20) {
         change();
     } else {
         if (eY - sY >= 20 && (eY - sY) > Math.abs(eX - sX)) {
+            canPlay = false;
             verticalMove();
         } else if (eX - sX >= 20) {
             horizontalMove(1);
@@ -218,6 +223,9 @@ can.addEventListener('touchend', function (e) {
     }
 }, this);
 document.onkeyup = function (e) {
+    if (!canPlay) {
+        return false
+    }
     switch (e.keyCode) {
         case 37:
             horizontalMove(-1);
@@ -229,7 +237,9 @@ document.onkeyup = function (e) {
             horizontalMove(1);
             break;
         case 40:
+            canPlay = false;
             verticalMove();
+            break;
         default:
             break;
     }
