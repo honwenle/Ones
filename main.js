@@ -151,11 +151,11 @@ function moveTo(arr) {
         ctx.clearRect(0, 0, WIDTH, HEIGHT);
         if (arr.length > 0) {
             arr.forEach(function (obj, i) {
-                if (obj.y + SIZE / 5 > HEIGHT - obj.toY * SIZE) {
+                if (obj.y + SIZE / 4 > HEIGHT - obj.toY * SIZE) {
                     arr.splice(i, 1);
                     drawBlockXY(obj, btx);
                 } else {
-                    obj.y += SIZE / 5;
+                    obj.y += SIZE / 4;
                 }
                 drawBlock(obj.col * SIZE, obj.y, obj.n);
             });
