@@ -151,6 +151,40 @@ function moveTo(arr) {
         }
     });
 }
+function drawFlip(x, y, s, n) {
+    _ctx = ctx;
+    _ctx.save();
+    _ctx.fillStyle = colorArr[n];
+    _ctx.scale(s, 1);
+    _ctx.fillRect(x * SIZE/s - SIZE/2 + SIZE/s/2, HEIGHT - y * SIZE - SIZE, SIZE, SIZE);
+    _ctx.fill();
+    _ctx.fillStyle = '#555';
+    _ctx.font = SIZE - 10 + 'px 微软雅黑';
+    _ctx.textAlign = 'center';
+    _ctx.textBaseline = 'middle';
+    _ctx.fillText(n, x * SIZE/s + SIZE/s/2, HEIGHT - y * SIZE - SIZE/2);
+    _ctx.restore();
+}
+function flipShow(arr) {
+    cancelAnimationFrame(timer);
+    timer = requestAnimationFrame(function fn() {
+        if (arr.length > 0) {
+            // ctx.clearRect(0, 0, WIDTH, HEIGHT);
+            arr.forEach(function (obj, i) {
+                if (obj.scale >= 1) {
+                    arr.splice(i, 1);
+                } else {
+                    obj.scale += .05;
+                }
+                drawFlip(obj.col, obj.row, obj.scale, obj.n);
+            });
+            timer = requestAnimationFrame(fn);
+        } else {
+            cancelAnimationFrame(timer);
+        }
+    });
+}
+function flipHide() {}
 function drawBlockXY(obj, context) {
     var x = obj.col * SIZE;
     var y = HEIGHT - obj.row * SIZE;
@@ -186,15 +220,16 @@ function newBlock() {
     A = {
         col: 1,
         row: 5,
+        scale: 0,
         n: ~~(Math.random() * lv) + 1
     };
-    drawBlockXY(A);
     B = {
         col: 2,
         row: 5,
+        scale: 0,
         n: ~~(Math.random() * lv) + 1
     };
-    drawBlockXY(B);
+    flipShow([A, B]);
     canPlay = true;
 }
 
