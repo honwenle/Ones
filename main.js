@@ -63,13 +63,14 @@ function checkClear() {
 }
 // 把组成员大于3个的消除，把最下左角的格子生成面值+1
 function clearBlock() {
-    var hasClear = false;
+    var clearList = [];
     groups.forEach(function (arr) {
         if (arr.length >= 3) {
-            hasClear = true;
             var min = arr[0], n = blockList[arr[0]].n;
             arr.forEach(function (n) {
                 min = Math.min(n, min);
+                blockList[n].scale = 1;
+                clearList.push(blockList[n]);
                 delete blockList[n];
             });
             var xy = getXY(min);
@@ -85,7 +86,7 @@ function clearBlock() {
     }
     groups = [];
     group = 0;
-    if (hasClear) {
+    if (clearList.length > 0) {
         dropBlock()
     } else {
         for (var i = 5; i < 7; i++) {
@@ -166,10 +167,10 @@ function drawFlip(x, y, s, n) {
     _ctx.restore();
 }
 function flipShow(arr) {
+    canPlay = false;
     cancelAnimationFrame(timer);
     timer = requestAnimationFrame(function fn() {
         if (arr.length > 0) {
-            // ctx.clearRect(0, 0, WIDTH, HEIGHT);
             arr.forEach(function (obj, i) {
                 if (obj.scale >= 1) {
                     arr.splice(i, 1);
@@ -181,6 +182,7 @@ function flipShow(arr) {
             timer = requestAnimationFrame(fn);
         } else {
             cancelAnimationFrame(timer);
+            canPlay = true;
         }
     });
 }
@@ -230,7 +232,6 @@ function newBlock() {
         n: ~~(Math.random() * lv) + 1
     };
     flipShow([A, B]);
-    canPlay = true;
 }
 
 can.addEventListener('touchstart', function (e) {
