@@ -63,7 +63,9 @@ function checkClear() {
 }
 // 把组成员大于3个的消除，把最下左角的格子生成面值+1
 function clearBlock() {
-    var clearList = [];
+    var clearList = [],
+        upgradeList = [],
+        flipShowList = [];
     groups.forEach(function (arr) {
         if (arr.length >= 3) {
             var min = arr[0], n = blockList[arr[0]].n;
@@ -74,7 +76,14 @@ function clearBlock() {
                 delete blockList[n];
             });
             var xy = getXY(min);
-            setBlock({}, xy.x, xy.y, n+1);
+            var upobj = {
+                col: xy.x,
+                row: xy.y,
+                n: n + 1,
+                scale: 0
+            };
+            upgradeList.push(upobj);
+            flipShowList.push(upobj);
             lv = n+1 > 2 ? Math.max(lv, n) : lv;
         }
     });
@@ -87,7 +96,15 @@ function clearBlock() {
     groups = [];
     group = 0;
     if (clearList.length > 0) {
-        dropBlock()
+        flipShow(clearList, 0, function () {
+            flipShow(flipShowList, 1, function () {
+                upgradeList.forEach(function (obj) {
+                    setBlock(obj, obj.col, obj.row, obj.n);
+                    drawBlockXY(obj, btx);
+                });
+                dropBlock();
+            });
+        });
     } else {
         for (var i = 5; i < 7; i++) {
             for (var j = 0; j < 5; j++) {
@@ -166,27 +183,27 @@ function drawFlip(x, y, s, n) {
     _ctx.fillText(n, x * SIZE/s + SIZE/s/2, HEIGHT - y * SIZE - SIZE/2);
     _ctx.restore();
 }
-function flipShow(arr) {
+function flipShow(arr, isShow, callback) {
     canPlay = false;
     cancelAnimationFrame(timer);
     timer = requestAnimationFrame(function fn() {
         if (arr.length > 0) {
+            !isShow && ctx.clearRect(0, 0, WIDTH, HEIGHT);
             arr.forEach(function (obj, i) {
-                if (obj.scale >= 1) {
+                if (isShow ? obj.scale >= 1 : obj.scale <= 0) {
                     arr.splice(i, 1);
                 } else {
-                    obj.scale += .05;
+                    obj.scale += isShow ? .05 : -.05;
                 }
                 drawFlip(obj.col, obj.row, obj.scale, obj.n);
             });
             timer = requestAnimationFrame(fn);
         } else {
             cancelAnimationFrame(timer);
-            canPlay = true;
+            typeof callback == 'function' && callback();
         }
     });
 }
-function flipHide() {}
 function drawBlockXY(obj, context) {
     var x = obj.col * SIZE;
     var y = HEIGHT - obj.row * SIZE;
@@ -231,7 +248,9 @@ function newBlock() {
         scale: 0,
         n: ~~(Math.random() * lv) + 1
     };
-    flipShow([A, B]);
+    flipShow([A, B], 1, function () {
+        canPlay = true;
+    });
 }
 
 can.addEventListener('touchstart', function (e) {
