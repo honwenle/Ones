@@ -11,15 +11,14 @@ var SIZE = WIDTH / 5;
 var timer;
 var group = 0,
     groups = [];
-var canPlay = true;
-
-var lv = 2;
+var canPlay = true,
+    lv = 2,
+    score = 0;
 
 back.width = WIDTH;
 back.height = HEIGHT;
 can.width = WIDTH;
 can.height = HEIGHT;
-var noclip = 0;
 var colorArr = ['#555', '#f6e6ce', '#faa297', '#eb4951', '#ff942a', '#ff2', '#a6aa3d', '#cde967', '#2a8e52', '#3cc6b0', '#5986c4', '#6c629f'];
 drawBack();
 newBlock();
@@ -115,8 +114,8 @@ function clearBlock() {
         for (var i = 5; i < 7; i++) {
             for (var j = 0; j < 5; j++) {
                 if (blockList[getID(j, i)]) {
-                    alert('GameOver')
-                    window.location.reload();
+                    canPlay = false;
+                    calcScore();
                     return false;
                 }
             }
@@ -363,4 +362,28 @@ function change() {
     drawBlockXY(A);
     drawBlockXY(B);
 }
-function calcScore() {}
+function calcScore() {
+    for (var i = 0; i < 5; i++) {
+        for (var j = 0; j < 5; j++) {
+            var obj = blockList[getID(j, i)];
+            if (!obj) {
+                continue;
+            }
+            scoreSingle = Math.pow(3, obj.n-1);
+            score += scoreSingle;
+            drawScore(obj.col, obj.row, obj.n, scoreSingle);
+        }
+    }
+}
+function drawScore(x, y, n, s) {
+    ctx.fillStyle = '#555';
+    ctx.font = SIZE/4 + 'px 微软雅黑';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+    ctx.fillText(s, x * SIZE + SIZE / 2, HEIGHT - y * SIZE);
+
+    ctx.clearRect(0, 0, WIDTH, HEIGHT - 7 * SIZE);
+    ctx.fillStyle = '#F4C380';
+    ctx.font = SIZE + 'px 微软雅黑';
+    ctx.fillText(score, WIDTH / 2, HEIGHT - 7 * SIZE);
+}
