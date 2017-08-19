@@ -383,6 +383,6 @@ function drawScore(x, y, n, s) {
 
     ctx.clearRect(0, 0, WIDTH, HEIGHT - 7 * SIZE);
     ctx.fillStyle = '#F4C380';
-    ctx.font = SIZE + 'px 微软雅黑';
+    ctx.font = Math.min((HEIGHT - 7 * SIZE)*.8, SIZE) + 'px 微软雅黑';
     ctx.fillText(score, WIDTH / 2, HEIGHT - 7 * SIZE);
 }
