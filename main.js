@@ -366,12 +366,11 @@ function calcScore() {
     for (var i = 0; i < 5; i++) {
         for (var j = 0; j < 5; j++) {
             var obj = blockList[getID(j, i)];
-            if (!obj) {
-                continue;
+            if (obj) {
+                scoreSingle = Math.pow(3, obj.n-1);
+                score += scoreSingle;
+                drawScore(obj.col, obj.row, obj.n, scoreSingle);
             }
-            scoreSingle = Math.pow(3, obj.n-1);
-            score += scoreSingle;
-            drawScore(obj.col, obj.row, obj.n, scoreSingle);
         }
     }
 }
