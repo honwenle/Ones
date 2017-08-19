@@ -196,10 +196,11 @@ function flipShow(arr, isShow, callback) {
         if (arr.length > 0) {
             !isShow && ctx.clearRect(0, 0, WIDTH, HEIGHT);
             arr.forEach(function (obj, i) {
-                if (isShow ? obj.scale >= 1 : obj.scale <= 0) {
+                if (isShow ? obj.scale >= 1 : obj.scale == 0) {
                     arr.splice(i, 1);
                 } else {
                     obj.scale += isShow ? .05 : -.05;
+                    obj.scale = Math.max(0, obj.scale);
                 }
                 drawFlip(obj.col, obj.row, obj.scale, obj.n);
             });
