@@ -183,7 +183,7 @@ function drawFlip(x, y, s, n) {
     _ctx.fillRect(x * SIZE/s - SIZE/2 + SIZE/s/2, HEIGHT - y * SIZE - SIZE, SIZE, SIZE);
     _ctx.fill();
     _ctx.fillStyle = '#555';
-    _ctx.font = SIZE - 10 + 'px 微软雅黑';
+    _ctx.font = SIZE/2 + 'px 微软雅黑';
     _ctx.textAlign = 'center';
     _ctx.textBaseline = 'middle';
     _ctx.fillText(n, x * SIZE/s + SIZE/s/2, HEIGHT - y * SIZE - SIZE/2);
@@ -199,8 +199,13 @@ function flipShow(arr, isShow, callback) {
                 if (isShow ? obj.scale >= 1 : obj.scale == 0) {
                     arr.splice(i, 1);
                 } else {
-                    obj.scale += isShow ? .05 : -.05;
-                    obj.scale = Math.max(0, obj.scale);
+                    if (isShow) {
+                        obj.scale += .08;
+                        obj.scale = Math.min(1, obj.scale);
+                    } else {
+                        obj.scale -= .08;
+                        obj.scale = Math.max(0, obj.scale);
+                    }
                 }
                 drawFlip(obj.col, obj.row, obj.scale, obj.n);
             });
@@ -237,7 +242,7 @@ function drawBlock(x, y, n, context) {
     _ctx.fillRect(x, y - SIZE, SIZE, SIZE);
     _ctx.fill();
     _ctx.fillStyle = '#555';
-    _ctx.font = SIZE - 10 + 'px 微软雅黑';
+    _ctx.font = SIZE/2 + 'px 微软雅黑';
     _ctx.textAlign = 'center';
     _ctx.textBaseline = 'middle';
     _ctx.fillText(n, x + SIZE / 2, y - SIZE / 2);
@@ -358,3 +363,4 @@ function change() {
     drawBlockXY(A);
     drawBlockXY(B);
 }
+function calcScore() {}
