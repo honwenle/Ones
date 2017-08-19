@@ -2,9 +2,12 @@ var back = document.getElementById('back');
 var can = document.getElementById('can');
 var btx = back.getContext('2d');
 var ctx = can.getContext('2d');
+// 候选方块
 var A = {},
     B = {};
+// 已经固定了的方块列表
 var blockList = {};
+// 可用宽高
 var WIDTH = can.clientWidth,
     HEIGHT = can.clientHeight;
 var SIZE = WIDTH / 5;
@@ -23,11 +26,12 @@ var colorArr = ['#555', '#f6e6ce', '#faa297', '#eb4951', '#ff942a', '#ff2', '#a6
 drawBack();
 newBlock();
 
+// 画背景
 function drawBack() {
     btx.fillStyle = '#0f92bb';
     btx.fillRect(0, 0, WIDTH, HEIGHT - 5 * SIZE);
 }
-// 把连接在一起的归为一组
+// 把连接在一起的归为一组(精华)
 function checkClear() {
     for (var i = 0; i < 5; i++) {
         for (var j = 0; j < 7; j++) {
@@ -123,6 +127,7 @@ function clearBlock() {
         newBlock();
     }
 }
+// 遍历找到可坠落的格子并坠落
 function dropBlock() {
     var dropList = [];
     for (var i = 0; i < 5; i++) {
@@ -150,6 +155,7 @@ function dropBlock() {
         checkClear();
     }
 }
+// 将带有toY属性的格子一个个以动画帧的形式变化到toY位置
 function moveTo(arr) {
     cancelAnimationFrame(timer);
     timer = requestAnimationFrame(function fn() {
@@ -174,6 +180,7 @@ function moveTo(arr) {
         }
     });
 }
+// 根据缩放比例s画格子(难点)
 function drawFlip(x, y, s, n) {
     _ctx = ctx;
     _ctx.save();
@@ -188,6 +195,7 @@ function drawFlip(x, y, s, n) {
     _ctx.fillText(n, x * SIZE/s + SIZE/s/2, HEIGHT - y * SIZE - SIZE/2);
     _ctx.restore();
 }
+// 将格子一个个以动画帧的形式变化出现或隐藏
 function flipShow(arr, isShow, callback) {
     canPlay = false;
     cancelAnimationFrame(timer);
@@ -215,11 +223,13 @@ function flipShow(arr, isShow, callback) {
         }
     });
 }
+// 根据格子对象画格子
 function drawBlockXY(obj, context) {
     var x = obj.col * SIZE;
     var y = HEIGHT - obj.row * SIZE;
     drawBlock(x, y, obj.n, context);
 }
+// 设置格子属性并加入到格子列表
 function setBlock(obj, x, y, n) {
     obj.col = x;
     obj.row = y;
@@ -264,6 +274,7 @@ function newBlock() {
     });
 }
 
+// 监听触屏，判断方向
 can.addEventListener('touchstart', function (e) {
     e.preventDefault();
     sX = e.touches[0].clientX;
@@ -288,6 +299,7 @@ can.addEventListener('touchend', function (e) {
         }
     }
 }, this);
+// 支持键盘操作
 document.onkeyup = function (e) {
     if (!canPlay) {
         return false
@@ -311,6 +323,7 @@ document.onkeyup = function (e) {
     }
 }
 
+// 计算toY的值
 function calcTo(Z) {
     var ct = 0;
     for (var i = 0; i < 7; i++) {
@@ -362,6 +375,7 @@ function change() {
     drawBlockXY(A);
     drawBlockXY(B);
 }
+// 计算分数
 function calcScore() {
     for (var i = 0; i < 5; i++) {
         for (var j = 0; j < 5; j++) {
