@@ -33,8 +33,6 @@ function checkClear() {
     for (var i = 0; i < 5; i++) {
         for (var j = 0; j < 7; j++) {
             var o = blockList[getID(i, j)],
-                d = blockList[getID(i, j-1)],
-                l = blockList[getID(i-1, j)],
                 u = blockList[getID(i, j+1)],
                 r = blockList[getID(i+1, j)];
             if (o) {
@@ -50,6 +48,14 @@ function checkClear() {
                 }
                 if (r && r.n == o.n) {
                     r.group = o.group;
+                    for (var k = j-1; k >= 0; k--) {
+                        var godown = blockList[getID(i+1, k)];
+                        if (godown.n == o.n) {
+                            godown.group = o.group
+                        } else {
+                            break;
+                        }
+                    }
                 }
                 groups[o.group] = groups[o.group] || [];
                 groups[o.group].push(getID(i, j));
