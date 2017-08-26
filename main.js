@@ -15,7 +15,7 @@ var timer;
 var group = 0,
     groups = [];
 var canPlay = true,
-    lv = 2,
+    lv = re.lv || 2,
     score = 0;
 
 back.width = WIDTH;
@@ -275,7 +275,7 @@ function newBlock(a, b) {
     flipShow([A, B], 1, function () {
         canPlay = true;
     });
-    storeRecord.saveRecord(A, B, blockList);
+    storeRecord.saveRecord(A, B, blockList, lv);
 }
 
 // 监听触屏，判断方向
