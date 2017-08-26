@@ -6,7 +6,7 @@ var ctx = can.getContext('2d');
 var A = {},
     B = {};
 // 已经固定了的方块列表
-var blockList = {};
+var blockList = re.list || {};
 // 可用宽高
 var WIDTH = can.clientWidth,
     HEIGHT = can.clientHeight;
@@ -24,12 +24,15 @@ can.width = WIDTH;
 can.height = HEIGHT;
 var colorArr = ['#555', '#f6e6ce', '#faa297', '#eb4951', '#ff942a', '#ff2', '#a6aa3d', '#cde967', '#2a8e52', '#3cc6b0', '#5986c4', '#6c629f'];
 drawBack();
-newBlock();
+newBlock(re.a, re.b);
 
 // 画背景
 function drawBack() {
     btx.fillStyle = '#0f92bb';
     btx.fillRect(0, 0, WIDTH, HEIGHT - 5 * SIZE);
+    for (var i in blockList) {
+        drawBlockXY(blockList[i], btx);
+    }
 }
 // 把连接在一起的归为一组(精华)
 function checkClear() {
@@ -256,14 +259,14 @@ function drawBlock(x, y, n, context) {
     _ctx.textBaseline = 'middle';
     _ctx.fillText(n, x + SIZE / 2, y - SIZE / 2);
 }
-function newBlock() {
-    A = {
+function newBlock(a, b) {
+    A = a || {
         col: 1,
         row: 5,
         scale: 0,
         n: ~~(Math.random() * lv) + 1
     };
-    B = {
+    B = b || {
         col: 2,
         row: 5,
         scale: 0,
@@ -272,6 +275,7 @@ function newBlock() {
     flipShow([A, B], 1, function () {
         canPlay = true;
     });
+    storeRecord.saveRecord(A, B, blockList);
 }
 
 // 监听触屏，判断方向
