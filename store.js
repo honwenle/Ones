@@ -3,11 +3,12 @@ var storeRecord = {
         var json = localStorage.getItem('record');
         return JSON.parse(json);
     },
-    saveRecord: function (a, b, list) {
+    saveRecord: function (a, b, list, lv) {
         var data = {
             a: a,
             b: b,
-            list: list
+            list: list,
+            lv: lv
         };
         var json = JSON.stringify(data);
         localStorage.setItem('record', json);
