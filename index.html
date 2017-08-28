@@ -58,6 +58,13 @@
             <div class="restore" onclick="storeRecord.goonGame()">恢复继续</div>
         </div>
     </div>
+    <div class="mask" id="over" onclick="hideOver()">
+        <div class="memu" id="overmenu">
+            <div class="new" onclick="storeRecord.newGame()">新游戏</div>
+            <div class="restore">最高数<span id="highnum">0</span></div>
+            <div class="restore">最高分<span id="highscore">0</span></div>
+        </div>
+    </div>
     <script src="store.js"></script>
     <script src="main.js"></script>
 </body>

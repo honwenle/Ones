@@ -123,6 +123,7 @@ function clearBlock() {
                 if (blockList[getID(j, i)]) {
                     canPlay = false;
                     calcScore();
+                    storeRecord.gameOver();
                     return false;
                 }
             }
