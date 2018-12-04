@@ -284,7 +284,7 @@ can.addEventListener('touchstart', function (e) {
     e.preventDefault();
     sX = e.touches[0].clientX;
     sY = e.touches[0].clientY;
-}, this);
+}, {passive: false});
 can.addEventListener('touchend', function (e) {
     if (!canPlay) {
         return false
