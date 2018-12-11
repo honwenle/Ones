@@ -34,40 +34,32 @@ function drawBack() {
         drawBlockXY(blockList[i], btx);
     }
 }
+// 检查十字四格
+function checkCross(i, j, n) {
+    if (i < 0 || i > 4) return false
+    var o = blockList[getID(i, j)]
+    if (o && !o.group && o.n == n) {
+        o.group = group
+        var arr = [[0,1],[1,0],[0,-1],[-1,0]]
+        for (let xy of arr) {
+            checkCross(i+xy[0], j+xy[1], n)
+        }
+    }
+}
 // 把连接在一起的归为一组(精华)
 function checkClear() {
     for (var i = 0; i < 5; i++) {
         for (var j = 0; j < 7; j++) {
-            var o = blockList[getID(i, j)],
-                u = blockList[getID(i, j+1)],
-                r = blockList[getID(i+1, j)];
+            var o = blockList[getID(i, j)]
             if (o) {
                 if (!o.group) {
-                    o.group = group + 1;
-                }
-                if (u && u.n == o.n) {
-                    if (u.group) {
-                        o.group = u.group;
-                    } else {
-                        u.group = o.group;
-                    }
-                }
-                if (r && r.n == o.n) {
-                    r.group = o.group;
-                    for (var k = j-1; k >= 0; k--) {
-                        var godown = blockList[getID(i+1, k)];
-                        if (godown.n == o.n) {
-                            godown.group = o.group
-                        } else {
-                            break;
-                        }
-                    }
+                    group++
+                    checkCross(i, j, o.n)
                 }
                 groups[o.group] = groups[o.group] || [];
                 groups[o.group].push(getID(i, j));
-                group = Math.max(group, o.group);
             } else {
-                break;
+                break
             }
         }
     }
