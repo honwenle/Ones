@@ -152,15 +152,18 @@ function dropBlock() {
     }
 }
 // 将带有toY属性的格子一个个以动画帧的形式变化到toY位置
+let ani_ct = 0
 function moveTo(arr) {
     cancelAnimationFrame(timer);
+    ani_ct = 0
     timer = requestAnimationFrame(function fn() {
         ctx.clearRect(0, 0, WIDTH, HEIGHT);
-        if (arr.length > 0) {
-            arr.forEach(function (obj, i) {
+        if (arr.length != ani_ct) {
+            ani_ct = 0
+            for (let i = 0; i < arr.length; i++) {
+                let obj = arr[i]
                 if (obj.y + SIZE / 4 > HEIGHT - obj.toY * SIZE) {
-                    arr.splice(i, 1);
-                    drawBlockXY(obj, btx);
+                    ani_ct++
                 } else {
                     obj.y += SIZE / 4;
                 }
