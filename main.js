@@ -168,7 +168,7 @@ function moveTo(arr) {
                     obj.y += SIZE / 4;
                 }
                 drawBlock(obj.col * SIZE, obj.y, obj.n);
-            });
+            }
             timer = requestAnimationFrame(fn);
         } else {
             cancelAnimationFrame(timer);
